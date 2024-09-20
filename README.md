@@ -16,7 +16,7 @@
             align-items: center;
             height: 50vh;
         }
-        .container {
+        container {
             max-width: 600px;
             margin: auto;
             padding: 20px;
