@@ -27,7 +27,11 @@ def compute_grades(prelim, midterm=None, final=None):
         return (f"Required Midterm Grade to Pass: {required_midterm:.2f}, "
                 f"Required Final Grade to Pass: {required_final:.2f}")
     else:
-        return "No worries, you passed bestie!"
+        # Check for Dean's List qualification
+        if prelim > 90:
+            return "Congratulations! You qualify for the Dean's List."
+        else:
+            return "No worries, you passed bestie!"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
