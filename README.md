@@ -1,44 +1,106 @@
-Overview
-This guide will help you set up the Grade Computation Tool, a Flask web application for computing required grades based on user input. Follow these steps to configure your environment and launch the web interface.
+from flask import Flask, request, render_template_string
 
-Prerequisites
-Python 3.x: Ensure Python 3 is installed on your system. You can download it from python.org.
-Pip: Python’s package installer, usually included with Python 3.
+app = Flask(__name__)
 
-Setup Instructions
-1. Clone or Create the Project
-If you have the project repository URL, clone it using Git:
-git clone https://github.com/yourusername/grade-computation-tool.git
-cd grade-computation-tool
-Alternatively, create a new directory and add your app.py file to it.
+def compute_grades(prelim, midterm=None, final=None):
+    prelim_weight = 0.20
+    midterm_weight = 0.30
+    final_weight = 0.50
+    if not 0 <= prelim <= 100:
+        return "Prelim grade must be between 0 and 100."
+    if prelim < 75:
+        passing_grade = 75.0
+        needed_grade = passing_grade - (prelim_weight * prelim)
+        # Calculate required grades
+        required_midterm = needed_grade / midterm_weight
+        required_final = needed_grade / final_weight
+        # Cap required grades to a maximum of 100
+        if required_midterm > 100:
+            required_midterm = 100
+        if required_final > 100:
+            required_final = 100        
+        return (f"Required Midterm Grade to Pass: {required_midterm:.2f}, "
+                f"Required Final Grade to Pass: {required_final:.2f}")
+    else:
+        # Check for Dean's List qualification
+        if prelim > 90:
+            return "Congratulations! You qualify for the Dean's List."
+        else:
+            return "No worries, you passed bestie!"
 
-2. Set Up a Virtual Environment
-A virtual environment helps manage dependencies separately for each project. Create and activate a virtual environment as follows:
-On Windows:
-python -m venv venv
-venv\Scripts\activate
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    result = ""
+    if request.method == 'POST':
+        try:
+            prelim = float(request.form['prelim'])
+            midterm = request.form.get('midterm', None)
+            final = request.form.get('final', None)          
+            if midterm:
+                midterm = float(midterm)
+            else:
+                midterm = None
+            if final:
+                final = float(final)
+            else:
+                final = None
+            result = compute_grades(prelim, midterm, final)
+        except ValueError:
+            result = "Please enter valid numerical values for grades."
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Grade Computation Tool</title>
+        <style>
+            body {
+                font-family: Monospace;
+                background-color: #B0BBD2;
+                margin: 20px;
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 50vh;
+            }
+            .container {
+                max-width: 600px;
+                margin: auto;
+                padding: 20px;
+                border: 4px solid #D1656B;
+                border-radius: 13px;
+                background-color: #F9B6A1;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .result {
+                margin-top: 20px;
+                padding: 10px;
+                background-color: #E6E0D0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Grade Computation Tool</h1>
+            <form method="post">
+                <label for="prelim">Enter your Prelim grade (required):</label>
+                <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required><br><br>
+                <label for="midterm">Enter your Midterm grade:</label>
+                <input type="number" id="midterm" name="midterm" min="0" max="100" step="0.01"><br><br>
+                <label for="final">Enter your Final grade:</label>
+                <input type="number" id="final" name="final" min="0" max="100" step="0.01"><br><br>
+                <button type="submit">Compute</button>
+            </form>
+            <div id="result" class="result">
+                <h2>Result</h2>
+                <div>{{ result }}</div>
+            </div>
+        </div>
+    </body>
+    </html>
+    ''', result=result)
 
-3. Install Flask
-With the virtual environment activated, install Flask using pip:
-pip install flask
-
-4. Add the Flask Application Code
-Create a file named app.py in your project directory and paste the code.
-
-5. Run the Flask Application
-With the virtual environment activated and dependencies installed, start the Flask server by running:
-python app.py
-
-6. Access the Web Interface
-Open a web browser and navigate to:
-http://127.0.0.1:5000/
-
-You should see the Grade Computation Tool interface. Enter your Prelim grade and optionally Midterm and Final grades, then click the "Compute" button to see the results.
-
-Notes
-Ensure that your Flask application is running. If you make changes to app.py, restart the Flask server for the changes to take effect.
-If you encounter issues with Flask not being found, verify that the virtual environment is activated and Flask is properly installed.
-
-Troubleshooting
-Flask Not Found: Ensure that the virtual environment is activated and Flask is installed.
-Application Errors: Check the terminal for error messages if the application does not start correctly.
+if __name__ == '__main__':
+    app.run(debug=True)
