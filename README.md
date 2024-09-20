@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +7,7 @@
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <style>
         body {
-             font-family: Monospace;
+            font-family: Monospace, monospace;
             background-color: #B0BBD2;
             margin: 20px;
             padding: 20px;
