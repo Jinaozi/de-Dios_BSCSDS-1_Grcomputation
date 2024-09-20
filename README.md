@@ -24,7 +24,6 @@
             background-color: #F9B6A1;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        }
         label, input, button {
             margin: 10px 0;
         }
