@@ -106,7 +106,7 @@
                 message += f"<br>Prelim Grade: {prelim:.2f}"
                 message += f"<br>Minimum Midterm Grade: {required_midterm:.2f}"
                 message += f"<br>Dean's Lister Midterm Grade: {required_midterm_dean:.2f}"
-                message += f"<br>Maximum Final Grade: {required_final:.2f}"
+                message += f"<br>Minimum Final Grade: {required_final:.2f}"
                 message += f"<br>Dean's Lister Final Grade: {required_final_dean:.2f}"                
                 results.element.innerHTML = message            
             except ValueError:
